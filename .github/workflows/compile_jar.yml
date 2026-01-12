@@ -1,0 +1,42 @@
+name: Compile Jar
+on:
+  release:
+    types: [ created ]
+env:
+  JAVA_VERSION: "21"
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(sed -n 's/.*<revision>\([0-9.]*\)<\/revision>.*/\1/p' pom.xml)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+  build_jar:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Maven 3
+        uses: aahmed-se/setup-maven@v3
+        with:
+          maven-version: 3.9.9
+      - name: Build Jar
+        working-directory: ${{ env.APK_BUILD_DIR }}
+        run: mvn -B package -DskipTests
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            target/*.jar
