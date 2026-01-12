@@ -27,13 +27,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Setup Maven 3
-        uses: aahmed-se/setup-maven@v3
-        with:
-          maven-version: 3.9.9
       - name: Build Jar
         working-directory: ${{ env.APK_BUILD_DIR }}
-        run: mvn -B package -DskipTests
+        run: mvn -P prod -DskipTests=true package
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
