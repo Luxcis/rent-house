@@ -1,4 +1,4 @@
-name: Compile Jar
+name: Compile Image
 on:
   release:
     types: [ created ]
