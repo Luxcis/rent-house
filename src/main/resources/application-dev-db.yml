@@ -1,0 +1,4 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:/Users/luxcis/data/workspace/Java/rent-house/src/main/resources/main.db
+    driver-class-name: org.sqlite.JDBC

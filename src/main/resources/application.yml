@@ -1,0 +1,59 @@
+server:
+  port: 9090
+  undertow:
+    threads:
+      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+      # 不要设置过大，如果过大，启动项目会报错：打开文件数过多
+      io: 8
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
+      # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
+      worker: 256
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分，不要设置太大，以免影响其他应用，合适即可
+    buffer-size: 1024
+    # 是否分配的直接内存(NIO直接分配的堆外内存)
+    direct-buffers: true
+spring:
+  profiles:
+    active: @spring.profiles.active@
+  application:
+    name: rent-house
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      host: @redis.host@
+      port: @redis.port@
+      password: @redis.password@
+      database: @redis.database@
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 4
+          min-idle: 2
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      mode: always
+  config:
+    import:
+      - optional:nacos:db?group=@env@&namespace=@nacos.namespace@
+      - optional:nacos:auth?group=@env@&namespace=@nacos.namespace@
+      - optional:nacos:wechat?group=@env@&namespace=@nacos.namespace@
+  nacos:
+    config:
+      enabled: @nacos.enabled@
+      server-addr: @nacos.server.addr@
+      username: @nacos.username@
+      password: @nacos.password@
+      import-check:
+        enabled: false
+logging:
+  level:
+    root: info
