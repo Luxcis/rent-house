@@ -1,0 +1,43 @@
+name: Compile Jar
+on:
+  release:
+    types: [ created ]
+env:
+  JAVA_VERSION: "21"
+  REGISTRY: ghcr.io
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      name: ${{ steps.get_version.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(sed -n 's/.*<revision>\([0-9.]*\)<\/revision>.*/\1/p' pom.xml)
+          NAME=$(sed -n 's/.*<name>\(.*\)<\/name>.*/\1/p' pom.xml)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+  build_image:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Build Image
+        working-directory: ${{ env.APK_BUILD_DIR }}
+        run: mvn -P prod -DskipTests=true -Ddocker.image.name=${{ env.REGISTRY }}/${{ github.actor }}/${{needs.build.outputs.name}} spring-boot:build-image
+      - name: Push Docker image
+        run: docker push -a ${{ env.REGISTRY }}/${{ github.actor }}/${{needs.build.outputs.name}}
