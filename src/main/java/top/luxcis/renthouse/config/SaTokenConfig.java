@@ -23,14 +23,14 @@ public class SaTokenConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验。
-        registry.addInterceptor(new SaInterceptor(_ -> StpUtil.checkLogin()))
+        registry.addInterceptor(new SaInterceptor(handler -> StpUtil.checkLogin()))
                 .addPathPatterns("/**");
     }
 
     @PostConstruct
     public void saTokenPostConstruct() {
         // 指定防火墙校验不通过时的处理方案
-        SaFirewallStrategy.instance.checkFailHandle = (e, _, res, _) -> {
+        SaFirewallStrategy.instance.checkFailHandle = (e, req, res, handler) -> {
             log.error("防火墙拦截：{}", e.getMessage());
             try {
                 HttpServletResponse response = (HttpServletResponse) res.getSource();

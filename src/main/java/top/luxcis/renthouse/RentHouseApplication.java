@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("top.luxcis.renthouse.mapper")
 public class RentHouseApplication {
-    static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(RentHouseApplication.class, args);
     }
 }

@@ -1,6 +1,7 @@
 package top.luxcis.renthouse.cache;
 
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -36,15 +37,14 @@ public class ExpiringRedisCacheManager extends RedisCacheManager {
      * @param ttlStr 有效期字符串(cacheNames = name + "#" + 时间 + d/h/m/s, 例如 xxxCache#12d)
      * @return {@link Duration}
      */
-    @SuppressWarnings("preview")
     private Duration convertDuration(String ttlStr) {
         if (NumberUtil.isLong(ttlStr)) {
             return Duration.ofSeconds(Long.parseLong(ttlStr));
         }
         ttlStr = ttlStr.toUpperCase();
         if (ttlStr.lastIndexOf("D") != -1) {
-            return Duration.parse(STR."P\{ttlStr}");
+            return Duration.parse(StrUtil.format("P{}", ttlStr));
         }
-        return Duration.parse(STR."PT\{ttlStr}");
+        return Duration.parse(StrUtil.format("PT{}", ttlStr));
     }
 }

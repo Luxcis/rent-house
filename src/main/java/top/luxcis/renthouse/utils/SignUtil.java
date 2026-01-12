@@ -46,7 +46,7 @@ public class SignUtil {
         CopyOptions opt = CopyOptions.create()
                 .ignoreNullValue()
                 .setIgnoreProperties(SignVo::getSignature)
-                .setPropertiesFilter((_, val) -> {
+                .setPropertiesFilter((field, val) -> {
                     if (val instanceof String str) {
                         return StrUtil.isNotBlank(str);
                     } else if (val instanceof Iterable || val instanceof Map) {
@@ -55,7 +55,7 @@ public class SignUtil {
                         return ObjectUtil.isNotEmpty(val);
                     }
                 })
-                .setFieldValueEditor((_, val) -> {
+                .setFieldValueEditor((field, val) -> {
                     if (val instanceof CodeEnum<?> code) {
                         return code.getCode().toString();
                     } else if (val instanceof Number num) {

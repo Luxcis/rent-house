@@ -37,19 +37,18 @@ public class MyBatisFlexConfig implements MyBatisFlexCustomizer {
         AuditManager.setMessageCollector(this::log);
     }
 
-    @SuppressWarnings("preview")
     private void log(AuditMessage auditMessage) {
         String[] ignoreTable = {"t_log", "t_history"};
         String sql = auditMessage.getFullSql();
         boolean ignore = StrUtil.containsAnyIgnoreCase(sql, ignoreTable);
         if (!ignore) {
-            String msg = STR."""
-                ************************************************
-                * sql:    \{sql}
-                * cost:   \{auditMessage.getElapsedTime()} ms
-                ************************************************
-                """;
-            log.info(msg);
+            String msg = """
+                    ************************************************
+                    * sql:    {}
+                    * cost:   {} ms
+                    ************************************************
+                    """;
+            log.info(msg, sql, auditMessage.getElapsedTime());
         }
     }
 }
