@@ -134,7 +134,10 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>${docker.image.name}</name>
+                        <tags>
+                            <tag>${docker.image.name}:${revision}</tag>
+                            <tag>${docker.image.name}:lastest</tag>
+                        </tags>
                     </image>
                     <excludes>
                         <exclude>
