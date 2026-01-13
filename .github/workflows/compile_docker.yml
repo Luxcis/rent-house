@@ -19,6 +19,7 @@ jobs:
           VERSION=$(sed -n 's/.*<revision>\([0-9.]*\)<\/revision>.*/\1/p' pom.xml)
           NAME=$(sed -n '/<name>/{s/.*<name>\(.*\)<\/name>.*/\1/p;q;}' pom.xml)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=NAME" >> $GITHUB_OUTPUT
   build_image:
     needs: build
     runs-on: ubuntu-latest
