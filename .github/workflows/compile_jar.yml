@@ -9,19 +9,28 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.get_version.outputs.version }}
+      name: ${{ steps.get_version.outputs.name }}
     steps:
       - uses: actions/checkout@v4
       - name: Get version from pubspec.yaml
         id: get_version
         run: |
           VERSION=$(sed -n 's/.*<revision>\([0-9.]*\)<\/revision>.*/\1/p' pom.xml)
+          NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
   build_jar:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -29,10 +38,12 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: Build Jar
         working-directory: ${{ env.APK_BUILD_DIR }}
-        run: mvn -P prod -DskipTests=true package
+        run: mvn -P prod -DskipTests=true -Ddocker.image.name=${{ env.REGISTRY }}/${{needs.build.outputs.name}}:${{needs.build.outputs.version}} spring-boot:build-image
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             target/*.jar
+      - name: Push Docker image
+        run: docker push -a ${{ env.REGISTRY }}/${{needs.build.outputs.name}}:${{needs.build.outputs.version}}
