@@ -39,6 +39,6 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: Build Image
         working-directory: ${{ env.APK_BUILD_DIR }}
-        run: mvn -P prod -DskipTests=true -Ddocker.image.name=${{ env.REGISTRY }}/${{ github.actor }}/${{needs.build.outputs.name}} spring-boot:build-image
+        run: mvn -P prod -DskipTests=true -Ddocker.image.name=${{ env.REGISTRY }}/${{needs.build.outputs.name}} spring-boot:build-image
       - name: Push Docker image
         run: docker push -a ${{ env.REGISTRY }}/${{ github.actor }}/${{needs.build.outputs.name}}
