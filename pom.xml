@@ -136,7 +136,7 @@
                     <image>
                         <tags>
                             <tag>${docker.image.name}:${revision}</tag>
-                            <tag>${docker.image.name}:lastest</tag>
+                            <tag>${docker.image.name}:latest</tag>
                         </tags>
                     </image>
                     <excludes>
