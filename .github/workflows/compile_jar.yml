@@ -39,7 +39,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: Build Jar
         working-directory: ${{ env.APK_BUILD_DIR }}
-        run: mvn -P prod -DskipTests=true -Ddocker.image.name=${{ env.REGISTRY }}/${{needs.build.outputs.name}}:${{needs.build.outputs.version}} spring-boot:build-image
+        run: mvn -P prod-docker -DskipTests=true -Ddocker.image.name=${{ env.REGISTRY }}/${{needs.build.outputs.name}}:${{needs.build.outputs.version}} spring-boot:build-image
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
