@@ -47,4 +47,4 @@ jobs:
           files: |
             target/*.jar
       - name: Push Docker image
-        run: docker push -a ${{ env.REGISTRY }}/${{needs.build.outputs.name}}:${{needs.build.outputs.version}}
+        run: docker push ${{ env.REGISTRY }}/${{needs.build.outputs.name}}:${{needs.build.outputs.version}}
