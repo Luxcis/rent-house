@@ -4,6 +4,7 @@ on:
     types: [ created ]
 env:
   JAVA_VERSION: "21"
+  REGISTRY: ghcr.io
 jobs:
   build:
     runs-on: ubuntu-22.04
