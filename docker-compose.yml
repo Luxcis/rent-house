@@ -1,0 +1,18 @@
+services:
+  rh:
+    image: luxcis/rent-house
+    build: .
+    container_name: rh
+    ports:
+      - "9090:9090"
+    environment:
+      NACOS_ENABLED: true
+      NACOS_SERVER_ADDR: 127.0.0.1:8848
+      NACOS_NAMESPACE: rh
+      NACOS_USERNAME: rh
+      NACOS_PASSWORD: 123456
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: 123456
+      REDIS_DATABASE: 10
+    restart: unless-stopped
