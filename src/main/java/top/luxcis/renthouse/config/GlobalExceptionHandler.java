@@ -1,5 +1,6 @@
 package top.luxcis.renthouse.config;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.util.ArrayUtil;
@@ -47,15 +48,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = CryptoException.class)
-    public Resp<Object> CryptoException(CryptoException ex) {
+    public Resp<String> CryptoException(CryptoException ex) {
         log.error("{} at {}", ex.getMessage(), ArrayUtil.isNotEmpty(ex.getStackTrace()) ? ex.getStackTrace()[0] : "No Stack Trace");
         return Resp.ERROR(RespEnum.BAD_REQUEST, "加密参数无法解析", ex.getMessage());
     }
 
     @ExceptionHandler(value = NotPermissionException.class)
-    public Resp<Object> NotPermissionException(HttpServletRequest request, NotPermissionException ex) {
+    public Resp<Void> NotPermissionException(HttpServletRequest request, NotPermissionException ex) {
         logError(request, ex);
-        return Resp.ERROR(ex.getCode(), ex.getMessage(), null);
+        return Resp.ERROR(RespEnum.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler(value = NotLoginException.class)
+    public Resp<Void> NotLoginException(HttpServletRequest request, NotLoginException ex) {
+        logError(request, ex);
+        return Resp.ERROR(RespEnum.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(value = ValidateException.class)
@@ -72,7 +79,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = ConstraintViolationException.class)
-    public Resp<Object> ConstraintViolationException(ConstraintViolationException ex) {
+    public Resp<Map<String, String>> ConstraintViolationException(ConstraintViolationException ex) {
         Map<String, String> errorMessage = ex.getConstraintViolations()
                 .stream()
                 .collect(Collectors.toMap(constraintViolation -> constraintViolation.getPropertyPath().toString(), ConstraintViolation::getMessage));
@@ -80,7 +87,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public Resp<Object> MethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public Resp<Map<String, String>> MethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         Map<String, String> errorMessage = result.getFieldErrors()
                 .stream()
@@ -89,19 +96,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    public Resp<Object> HttpMessageNotReadableException(HttpServletRequest request, HttpMessageNotReadableException ex) {
+    public Resp<Void> HttpMessageNotReadableException(HttpServletRequest request, HttpMessageNotReadableException ex) {
         logError(request, ex);
         return Resp.ERROR(RespEnum.BAD_REQUEST, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public Resp<Object> IllegalArgumentException(IllegalArgumentException ex) {
+    public Resp<Void> IllegalArgumentException(IllegalArgumentException ex) {
         log.error("{} at {}", ex.getMessage(), ArrayUtil.isNotEmpty(ex.getStackTrace()) ? ex.getStackTrace()[0] : "No Stack Trace");
         return Resp.ERROR(RespEnum.BAD_REQUEST, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = BindException.class)
-    public Resp<Object> BindException(BindException ex) {
+    public Resp<Map<String, String>> BindException(BindException ex) {
         Map<String, String> errorMessage = ex.getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField, fieldError -> StrUtil.blankToDefault(fieldError.getDefaultMessage(), "参数错误")));
@@ -109,37 +116,37 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)
-    public Resp<Object> MaxUploadSizeExceededException(HttpServletRequest request, MaxUploadSizeExceededException ex) {
+    public Resp<Void> MaxUploadSizeExceededException(HttpServletRequest request, MaxUploadSizeExceededException ex) {
         logError(request, ex);
         return Resp.ERROR(RespEnum.PAYLOAD_TOO_LARGE, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = MultipartException.class)
-    public Resp<Object> MultipartException(HttpServletRequest request, MultipartException ex) {
+    public Resp<Void> MultipartException(HttpServletRequest request, MultipartException ex) {
         logError(request, ex, false);
         return Resp.ERROR(RespEnum.BAD_REQUEST, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
-    public Resp<Object> HttpRequestMethodNotSupportedException(HttpServletRequest request, HttpRequestMethodNotSupportedException ex) {
+    public Resp<Void> HttpRequestMethodNotSupportedException(HttpServletRequest request, HttpRequestMethodNotSupportedException ex) {
         log.error("{} -> {}", request.getRequestURI(), ex.getMessage());
         return Resp.ERROR(RespEnum.METHOD_NOT_ALLOWED, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = SQLException.class)
-    public Resp<Object> sqlException(HttpServletRequest request, SQLException ex) {
+    public Resp<Void> sqlException(HttpServletRequest request, SQLException ex) {
         logError(request, ex);
         return Resp.ERROR(RespEnum.SQL_EXCEPTION, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = ServletException.class)
-    public Resp<Object> nestedServletException(HttpServletRequest request, ServletException ex) {
+    public Resp<Void> nestedServletException(HttpServletRequest request, ServletException ex) {
         logError(request, ex);
         return Resp.ERROR(RespEnum.INTERNAL_SERVER_ERROR, ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = Exception.class)
-    public Resp<Object> exception(HttpServletRequest request, Exception ex) {
+    public Resp<Void> exception(HttpServletRequest request, Exception ex) {
         logError(request, ex);
         return Resp.ERROR(RespEnum.INTERNAL_SERVER_ERROR, ex.getMessage(), null);
     }

@@ -2,7 +2,6 @@ package top.luxcis.renthouse.service;
 
 import com.mybatisflex.core.service.IService;
 import top.luxcis.renthouse.entity.User;
-import top.luxcis.renthouse.vo.request.WechatLoginVo;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +13,10 @@ public interface UserService extends IService<User> {
     /**
      * 通过微信小程序code登录
      *
-     * @param vo 登陆参数
+     * @param code 登陆参数
      * @return {@link String token}
      */
-    String loginByWechatMPCode(WechatLoginVo vo);
+    String loginByWechatMPCode(String code);
 
     /**
      * 根据unionid和openid查询用户
@@ -33,10 +32,9 @@ public interface UserService extends IService<User> {
      *
      * @param unionid unionid
      * @param openId  openId
-     * @param name    昵称
      * @return {@link User }
      */
-    User createUserByOpenid(String unionid, String openId, String name);
+    User createUserByOpenid(String unionid, String openId);
 
     /**
      * 通过密码登录
@@ -62,4 +60,12 @@ public interface UserService extends IService<User> {
      * @param roles 角色
      */
     void bindRoles(String id, List<String> roles);
+
+    /**
+     * 完善用户信息
+     *
+     * @param id   ID
+     * @param name 名字
+     */
+    void doComplete(String id, String name);
 }

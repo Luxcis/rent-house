@@ -1,11 +1,15 @@
 package top.luxcis.renthouse.config;
 
+import cn.dev33.satoken.fun.strategy.SaCorsHandleFunction;
 import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.router.SaHttpMethod;
+import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.strategy.SaFirewallStrategy;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -40,6 +44,34 @@ public class SaTokenConfig implements WebMvcConfigurer {
                 writer.flush();
             } catch (Exception ignored) {
             }
+        };
+    }
+
+    /**
+     * CORS 跨域处理策略
+     */
+    @Bean
+    public SaCorsHandleFunction corsHandle() {
+        return (req, res, sto) -> {
+            // 获得客户端domain
+            String origin = req.getHeader("Origin");
+            if (origin == null) {
+                origin = req.getHeader("Referer");
+            }
+            res
+                    // 允许指定域访问跨域资源
+                    .setHeader("Access-Control-Allow-Origin", origin)
+                    // 允许所有请求方式
+                    .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+                    // 有效时间
+                    .setHeader("Access-Control-Max-Age", "3600")
+                    // 允许的header参数
+                    .setHeader("Access-Control-Allow-Headers", "*");
+
+            // 如果是预检请求，则立即返回到前端
+            SaRouter.match(SaHttpMethod.OPTIONS)
+                    // .free(r -> System.out.println("--------OPTIONS预检请求，不做处理"))
+                    .back();
         };
     }
 }

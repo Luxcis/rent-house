@@ -15,19 +15,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.luxcis.renthouse.config.WechatProperties;
 import top.luxcis.renthouse.entity.User;
-import top.luxcis.renthouse.entity.def.UserDef;
 import top.luxcis.renthouse.enums.ExceptionEnum;
 import top.luxcis.renthouse.exception.BusinessException;
 import top.luxcis.renthouse.mapper.UserMapper;
 import top.luxcis.renthouse.service.RoleService;
 import top.luxcis.renthouse.service.UserService;
 import top.luxcis.renthouse.utils.PasswordUtil;
-import top.luxcis.renthouse.vo.request.WechatLoginVo;
 import top.luxcis.renthouse.vo.response.WechatLoginResponse;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static top.luxcis.renthouse.entity.def.UserDef.USER;
 
 /**
  * @author zhuang
@@ -41,8 +41,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final RoleService roleService;
 
     @Override
-    public String loginByWechatMPCode(WechatLoginVo vo) {
-        Map<String, Object> params = Map.of("appid", properties.getAppid(), "secret", properties.getSecret(), "js_code", vo.getCode(), "grant_type", "authorization_code");
+    public String loginByWechatMPCode(String code) {
+        Map<String, Object> params = Map.of("appid", properties.getAppid(), "secret", properties.getSecret(), "js_code", code, "grant_type", "authorization_code");
         String res = HttpUtil.get("https://api.weixin.qq.com/sns/jscode2session", params);
         WechatLoginResponse result = JSONUtil.toBean(res, WechatLoginResponse.class);
         if (result.getErrcode() == 0) {
@@ -50,11 +50,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             String unionId = result.getUnionid();
             String sessionKey = result.getSessionKey();
             User user = this.queryByOpenid(unionId, openId)
-                    .orElseGet(() -> this.createUserByOpenid(unionId, openId, vo.getName()));
+                    .orElseGet(() -> this.createUserByOpenid(unionId, openId));
             Assert.isTrue(user.getActive(), () -> new BusinessException(ExceptionEnum.USER_NOTE_ACTIVE));
             StpUtil.login(user.getId(), "wechat");
             StpUtil.getSession().set(WECHAT_SESSION_KEY, sessionKey);
-            return StpUtil.getTokenInfo().getTokenValue();
+            return StpUtil.getTokenValue();
         } else {
             throw new BusinessException(ExceptionEnum.WECHAT_API_ERROR, result.getErrcode().toString(), result.getErrmsg());
         }
@@ -64,8 +64,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Optional<User> queryByOpenid(String unionid, String openId) {
         QueryWrapper query = QueryWrapper.create()
                 .select()
-                .where(UserDef.USER.OPENID.eq(openId))
-                .and(UserDef.USER.UNIONID.eq(unionid, StrUtil.isNotBlank(unionid)));
+                .where(USER.OPENID.eq(openId))
+                .and(USER.UNIONID.eq(unionid, StrUtil.isNotBlank(unionid)));
         List<User> list = this.list(query);
         if (list.size() > 1) {
             throw new BusinessException(ExceptionEnum.DATA_ERROR);
@@ -74,11 +74,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User createUserByOpenid(String unionid, String openId, String name) {
+    public User createUserByOpenid(String unionid, String openId) {
         User user = new User();
         user.setUnionid(unionid);
         user.setOpenid(openId);
-        user.setName(name);
         user.setActive(true);
         this.save(user);
         long count = this.count();
@@ -93,7 +92,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public String loginByPwd(String username, String password) {
         QueryWrapper query = QueryWrapper.create()
                 .select()
-                .where(UserDef.USER.USERNAME.eq(username));
+                .where(USER.USERNAME.eq(username));
         List<User> list = this.list(query);
         if (list.size() > 1) {
             throw new BusinessException(ExceptionEnum.DATA_ERROR);
@@ -104,7 +103,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .map(u -> {
                     Assert.isTrue(u.getActive(), () -> new BusinessException(ExceptionEnum.USER_NOTE_ACTIVE));
                     StpUtil.login(u.getId(), "main");
-                    return StpUtil.getTokenInfo().getTokenValue();
+                    return StpUtil.getTokenValue();
                 })
                 .orElseThrow(() -> new BusinessException(ExceptionEnum.USER_LOGIN_FAIL));
     }
@@ -121,5 +120,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Db.deleteByQuery("t_user_role_ref", QueryWrapper.create().where("user_id = ?", id));
         List<Row> rows = roles.stream().map(role -> new Row().set("user_id", id).set("role_id", role)).toList();
         Optional.of(rows).filter(CollUtil::isNotEmpty).ifPresent((data) -> Db.insertBatch("t_user_role_ref", data));
+    }
+
+    @Override
+    public void doComplete(String id, String name) {
+        this.updateChain()
+                .set(USER.NAME, name)
+                .where(USER.ID.eq(id))
+                .update();
     }
 }

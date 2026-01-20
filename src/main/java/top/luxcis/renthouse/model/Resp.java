@@ -23,7 +23,7 @@ public class Resp<T> implements Serializable {
     private static final long serialVersionUID = 5939697113340271505L;
 
     private Integer code;
-    private String description;
+    private String message;
     private boolean success;
     private long timestamp = System.currentTimeMillis();
     private T data;
@@ -36,14 +36,14 @@ public class Resp<T> implements Serializable {
         this(respEnum, null, data);
     }
 
-    private Resp(RespEnum respEnum, String description, T data) {
-        this(respEnum == RespEnum.OK, respEnum.getCode(), StrUtil.blankToDefault(description, respEnum.getName()), data);
+    private Resp(RespEnum respEnum, String message, T data) {
+        this(respEnum == RespEnum.OK, respEnum.getCode(), StrUtil.blankToDefault(message, respEnum.getName()), data);
     }
 
-    private Resp(boolean success, Integer code, String description, T data) {
+    private Resp(boolean success, Integer code, String message, T data) {
         this.success = success;
         this.code = code;
-        this.description = description;
+        this.message = message;
         this.data = data;
     }
 
