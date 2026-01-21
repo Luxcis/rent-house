@@ -66,6 +66,7 @@ public class SignUtil {
         Map<String, Object> map = BeanUtil.beanToMap(vo, new LinkedHashMap<>(), opt);
         String signature = map.keySet().stream().sorted().map(key -> key + map.get(key).toString()).collect(Collectors.joining(""));
         String token = StpUtil.getTokenValue();
+        // log.info("签名内容: {}{}",signature,token);
         return SecureUtil.sha256(signature + token).toLowerCase();
     }
 

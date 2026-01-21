@@ -106,7 +106,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements Bi
     @Override
     public List<NotificationVo> notification() {
         return this.queryChain()
-                .select(ROOM.NAME.as(NotificationVo::getRoom), BILL.SUM_PRICE.as(NotificationVo::getPrice))
+                .select(ROOM.NAME.as(NotificationVo::getRoom), BILL.SUM_PRICE.as(NotificationVo::getPrice), BILL.CREATE_TIME.as(NotificationVo::getDate))
                 .from(BILL)
                 .leftJoin(ROOM)
                 .on(BILL.ROOM_ID.eq(ROOM.ID))
