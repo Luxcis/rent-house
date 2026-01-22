@@ -118,7 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void bindRoles(String id, List<String> roles) {
         Db.deleteByQuery("t_user_role_ref", QueryWrapper.create().where("user_id = ?", id));
-        List<Row> rows = roles.stream().map(role -> new Row().set("user_id", id).set("role_id", role)).toList();
+        List<Row> rows = roles.stream().map(roleService::code2Id).map(role -> new Row().set("user_id", id).set("role_id", role)).toList();
         Optional.of(rows).filter(CollUtil::isNotEmpty).ifPresent((data) -> Db.insertBatch("t_user_role_ref", data));
     }
 

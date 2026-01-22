@@ -1,5 +1,7 @@
 package top.luxcis.renthouse.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
@@ -65,6 +67,7 @@ public class Log implements Serializable {
     /**
      * 用户id
      */
+    @JsonIgnore
     private String userId;
     /**
      * 访问ip
@@ -73,5 +76,6 @@ public class Log implements Serializable {
     /**
      * 日志时间
      */
+    @JsonFormat(timezone = "Asia/Shanghai", pattern = "yyyy-MM-dd")
     private Date logTime;
 }

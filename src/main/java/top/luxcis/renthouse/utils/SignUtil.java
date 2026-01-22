@@ -59,7 +59,7 @@ public class SignUtil {
                     if (val instanceof CodeEnum<?> code) {
                         return code.getCode().toString();
                     } else if (val instanceof Number num) {
-                        return NumberUtil.decimalFormat("0.###", num);
+                        return NumberUtil.decimalFormat("0.00", num);
                     }
                     return val.toString();
                 });

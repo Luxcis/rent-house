@@ -16,6 +16,6 @@ import java.util.Date;
 public class IncomeVo {
     private String room;
     private Double price;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone = "Asia/Shanghai", pattern = "yyyy-MM-dd")
     private Date date;
 }

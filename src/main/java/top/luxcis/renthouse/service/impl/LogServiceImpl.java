@@ -1,5 +1,6 @@
 package top.luxcis.renthouse.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import top.luxcis.renthouse.mapper.LogMapper;
 import top.luxcis.renthouse.service.LogService;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zhuang
@@ -31,5 +33,14 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
         log.setLogTime(new Date());
         log.setUserId(userId);
         this.save(log);
+    }
+
+    @Override
+    public List<Log> list(String next) {
+        return this.queryChain()
+                .ge(Log::getId, next, StrUtil.isNotEmpty(next))
+                .orderBy(Log::getLogTime, false)
+                .limit(10)
+                .list();
     }
 }

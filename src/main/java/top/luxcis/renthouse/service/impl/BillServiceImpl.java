@@ -48,7 +48,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements Bi
                 .eq(Bill::getRoomId, roomId, StrUtil.isNotBlank(roomId))
                 .lt(Bill::getId, next, StrUtil.isNotBlank(next))
                 .orderBy(Bill::getCreateTime, false)
-                .limit(5)
+                .limit(10)
                 .list();
     }
 

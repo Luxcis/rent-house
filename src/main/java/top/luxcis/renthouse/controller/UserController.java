@@ -52,7 +52,7 @@ public class UserController {
 
     @PostMapping("bindRoles")
     @ApiLog(type = LogType.SAVE)
-    @Operation(summary = "用户列表", description = "用户列表", method = "GET")
+    @Operation(summary = "绑定角色", description = "绑定角色", method = "GET")
     @ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = Resp.class)))
     public Resp<Void> bindRoles(@RequestBody UserRolesVo vo) {
         userService.bindRoles(vo.getId(), vo.getRoles());

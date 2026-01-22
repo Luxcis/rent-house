@@ -20,5 +20,5 @@ public class ConfigUpdateVo extends SignVo {
     @NotBlank
     private String code;
     @NotBlank
-    private String value;
+    private Double value;
 }

@@ -38,5 +38,5 @@ public interface ConfigService extends IService<Config> {
      * @param code  code
      * @param value 配置值
      */
-    void updateConfig(String code, String value);
+    void updateConfig(String code, Double value);
 }

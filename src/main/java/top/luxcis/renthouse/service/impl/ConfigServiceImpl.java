@@ -1,7 +1,5 @@
 package top.luxcis.renthouse.service.impl;
 
-import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.NumberUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.cache.annotation.CachePut;
@@ -15,6 +13,8 @@ import top.luxcis.renthouse.mapper.ConfigMapper;
 import top.luxcis.renthouse.service.ConfigService;
 
 import java.util.List;
+
+import static top.luxcis.renthouse.entity.def.ConfigDef.CONFIG;
 
 /**
  * @author zhuang
@@ -47,9 +47,9 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
 
     @Override
     @CachePut(value = "config", key = "#code")
-    public void updateConfig(String code, String value) {
-        Assert.isTrue(NumberUtil.isNumber(value), () -> new BusinessException(ExceptionEnum.CONFIG_NOT_NUMBER));
-        Config config = this.getConfigByCode(code).setValue(value);
-        this.updateById(config);
+    public void updateConfig(String code, Double value) {
+        this.updateChain().set(CONFIG.VALUE, value)
+                .where(CONFIG.CODE.eq(code))
+                .update();
     }
 }
