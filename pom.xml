@@ -211,15 +211,15 @@
             <properties>
                 <env>prod</env>
                 <spring.profiles.active>${env}</spring.profiles.active>
-                <nacos.enabled>${env.NACOS_ENABLED}</nacos.enabled>
-                <nacos.server.addr>${env.NACOS_SERVER_ADDR}</nacos.server.addr>
-                <nacos.namespace>${env.NACOS_NAMESPACE}</nacos.namespace>
-                <nacos.username>${env.NACOS_USERNAME}</nacos.username>
-                <nacos.password>${env.NACOS_PASSWORD}</nacos.password>
-                <redis.host>${env.REDIS_HOST}</redis.host>
-                <redis.port>${env.REDIS_PORT}</redis.port>
-                <redis.password>${env.REDIS_PASSWORD}</redis.password>
-                <redis.database>${env.REDIS_DATABASE}</redis.database>
+                <nacos.enabled>${NACOS_ENABLED}</nacos.enabled>
+                <nacos.server.addr>${NACOS_SERVER_ADDR}</nacos.server.addr>
+                <nacos.namespace>${NACOS_NAMESPACE}</nacos.namespace>
+                <nacos.username>${NACOS_USERNAME}</nacos.username>
+                <nacos.password>${NACOS_PASSWORD}</nacos.password>
+                <redis.host>${REDIS_HOST}</redis.host>
+                <redis.port>${REDIS_PORT}</redis.port>
+                <redis.password>${REDIS_PASSWORD}</redis.password>
+                <redis.database>${REDIS_DATABASE}</redis.database>
             </properties>
         </profile>
     </profiles>

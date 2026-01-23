@@ -2,3 +2,8 @@ spring:
   datasource:
     url: jdbc:sqlite:/Users/luxcis/data/workspace/Java/rent-house/src/main/resources/main.db
     driver-class-name: org.sqlite.JDBC
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      mode: always

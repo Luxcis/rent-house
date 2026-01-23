@@ -36,11 +36,6 @@ spring:
           max-active: 10
           max-idle: 4
           min-idle: 2
-  sql:
-    init:
-      schema-locations: classpath:schema.sql
-      data-locations: classpath:data.sql
-      mode: always
   config:
     import:
       - optional:nacos:db?group=@env@&namespace=@nacos.namespace@
