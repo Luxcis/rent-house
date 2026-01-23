@@ -38,9 +38,9 @@ spring:
           min-idle: 2
   config:
     import:
-      - nacos:db?group=@env@
-      - nacos:auth?group=@env@
-      - nacos:wechat?group=@env@
+      - optional:nacos:db?group=@env@
+      - optional:nacos:auth?group=@env@
+      - optional:nacos:wechat?group=@env@
   cloud:
     nacos:
       config:
@@ -49,8 +49,10 @@ spring:
         username: @nacos.username@
         password: @nacos.password@
         namespace: @nacos.namespace@
+        group: @env@
+        file-extension: yaml
         import-check:
-          enabled: true
+          enabled: false
 logging:
   level:
     root: info
