@@ -139,6 +139,7 @@
                             <tag>${docker.image.name}:${revision}</tag>
                             <tag>${docker.image.name}:latest</tag>
                         </tags>
+                        <createdDate>now</createdDate>
                     </image>
                     <excludes>
                         <exclude>
