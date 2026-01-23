@@ -38,17 +38,19 @@ spring:
           min-idle: 2
   config:
     import:
-      - optional:nacos:db?group=@env@&namespace=@nacos.namespace@
-      - optional:nacos:auth?group=@env@&namespace=@nacos.namespace@
-      - optional:nacos:wechat?group=@env@&namespace=@nacos.namespace@
-  nacos:
-    config:
-      enabled: @nacos.enabled@
-      server-addr: @nacos.server.addr@
-      username: @nacos.username@
-      password: @nacos.password@
-      import-check:
-        enabled: false
+      - nacos:db?group=@env@
+      - nacos:auth?group=@env@
+      - nacos:wechat?group=@env@
+  cloud:
+    nacos:
+      config:
+        enabled: @nacos.enabled@
+        server-addr: @nacos.server.addr@
+        username: @nacos.username@
+        password: @nacos.password@
+        namespace: @nacos.namespace@
+        import-check:
+          enabled: true
 logging:
   level:
     root: info

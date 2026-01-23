@@ -64,7 +64,7 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-alibaba-nacos-config</artifactId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
             <version>2025.0.0.0</version>
         </dependency>
         <!-- Sa-Token 权限认证，在线文档：https://sa-token.cc -->
@@ -195,7 +195,7 @@
             <id>prod</id>
             <properties>
                 <env>prod</env>
-                <spring.profiles.active>${env}</spring.profiles.active>
+                <spring.profiles.active>${env}-db,${env}-auth,${env}-wechat</spring.profiles.active>
                 <nacos.enabled>true</nacos.enabled>
                 <nacos.server.addr>127.0.0.1:8848</nacos.server.addr>
                 <nacos.namespace>rh</nacos.namespace>
