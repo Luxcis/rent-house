@@ -58,8 +58,8 @@ public class SignUtil {
                 .setFieldValueEditor((field, val) -> {
                     if (val instanceof CodeEnum<?> code) {
                         return code.getCode().toString();
-                    } else if (val instanceof Number num) {
-                        return NumberUtil.decimalFormat("0.00", num);
+                    } else if (NumberUtil.isDouble(val.toString())) {
+                        return NumberUtil.decimalFormat("0.00", val);
                     }
                     return val.toString();
                 });
