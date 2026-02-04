@@ -45,7 +45,7 @@ public class AuthController {
 
     @PostMapping("doComplete/wechat")
     @ApiLog(type = LogType.LOGIN)
-    @Operation(summary = "微信小程序登陆", description = "微信小程序登陆", method = "POST")
+    @Operation(summary = "微信小程序完善信息", description = "微信小程序完善信息", method = "POST")
     @ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = Resp.class)))
     public Resp<Void> doComplete(@RequestBody @NotNull User user) {
         userService.doComplete(user.getId(), user.getName());

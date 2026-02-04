@@ -113,6 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = this.getById(id);
         user.setActive(status);
         this.updateById(user);
+        StpUtil.kickout(id);
     }
 
     @Override
